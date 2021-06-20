@@ -59,6 +59,8 @@ func main() {
 	find := os.Getenv("INPUT_FIND")
 	replace := os.Getenv("INPUT_REPLACE")
 
+	fmt.Println(fmt.Sprintf(`Replacing %s with %s`, find, replace))
+
 	files, filesErr := listFiles(include, exclude)
 	check(filesErr)
 
