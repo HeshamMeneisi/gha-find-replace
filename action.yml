@@ -12,13 +12,16 @@ inputs:
     required: false
   find:
     description: "The string we want to replace"
-    required: true
+    required: false
   replace:
     description: "The new string to replace with"
-    required: true
+    required: false
+  mapping:
+    description: "Replacement mapping"
+    required: false
 outputs:
   modifiedFiles:
     description: "The number of files which have been modified"
 runs:
   using: "docker"
-  image: "docker://jacobtomlinson/gha-find-replace:0.1.2"
+  image: "docker://heshammeneisi/gha-find-replace:0.1.0"

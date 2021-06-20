@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"encoding/json"
 )
 
 func check(e error) {
@@ -46,11 +47,35 @@ func findAndReplace(path string, find string, replace string) (bool, error) {
 		if newContents != string(read) {
 			writeErr := ioutil.WriteFile(path, []byte(newContents), 0)
 			check(writeErr)
+			fmt.Println(fmt.Sprintf(`Replaced %s with %s in %s`, find, replace, path))
 			return true, nil
 		}
+		fmt.Println(fmt.Sprintf(`Failed to replace %s with %s in %s`, find, replace, path))
 	}
 
 	return false, nil
+}
+
+func replaceSimple(files []string, find string, replace string) int {
+	modifiedCount := 0
+	fmt.Println(fmt.Sprintf(`Replacing %s with %s`, find, replace))
+	for _, path := range files {
+		modified, findAndReplaceErr := findAndReplace(path, find, replace)
+		check(findAndReplaceErr)
+
+		if modified {
+			modifiedCount += 1
+		}
+	}
+	return modifiedCount
+}
+
+func replaceMapping(files []string, mapping map[string]string) int {
+	modifiedCount := 0
+	for key, value := range mapping {
+		modifiedCount += replaceSimple(files, key, value)
+	}
+	return modifiedCount
 }
 
 func main() {
@@ -58,21 +83,19 @@ func main() {
 	exclude := os.Getenv("INPUT_EXCLUDE")
 	find := os.Getenv("INPUT_FIND")
 	replace := os.Getenv("INPUT_REPLACE")
-
-	fmt.Println(fmt.Sprintf(`Replacing %s with %s`, find, replace))
+	mapping_json := os.Getenv("INPUT_MAPPING")
 
 	files, filesErr := listFiles(include, exclude)
 	check(filesErr)
 
 	modifiedCount := 0
-
-	for _, path := range files {
-		modified, findAndReplaceErr := findAndReplace(path, find, replace)
-		check(findAndReplaceErr)
-
-		if modified {
-			modifiedCount++
-		}
+	if mapping_json != "" {
+		var mapping map[string]string
+		json.Unmarshal([]byte(mapping_json), &mapping)
+		fmt.Println(fmt.Sprintf(`Replacing according to mapping %s`, mapping_json))
+		modifiedCount = replaceMapping(files, mapping)
+	} else {
+		modifiedCount = replaceSimple(files, find, replace)
 	}
 
 	fmt.Println(fmt.Sprintf(`::set-output name=modifiedFiles::%d`, modifiedCount))
