@@ -50,9 +50,7 @@ func findAndReplace(path string, find string, replace string) (bool, error) {
 			fmt.Println(fmt.Sprintf(`Replaced %s with %s in %s`, find, replace, path))
 			return true, nil
 		}
-		fmt.Println(fmt.Sprintf(`Failed to replace %s with %s in %s`, find, replace, path))
 	}
-
 	return false, nil
 }
 
