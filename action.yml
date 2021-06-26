@@ -30,4 +30,4 @@ outputs:
     description: "The number of files which have been modified"
 runs:
   using: "docker"
-  image: "docker://heshammeneisi/gha-find-replace:0.2.0"
+  image: "docker://heshammeneisi/gha-find-replace:0.2.1"
