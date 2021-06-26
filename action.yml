@@ -19,6 +19,12 @@ inputs:
   mapping:
     description: "Replacement mapping"
     required: false
+  key_prefix:
+    description: "Prefix to include for mapping keys (e.g. `$` for `$VAR`)"
+    required: false
+  key_suffix:
+    description: "Suffix to include for mapping keys (e.g. `}}` for `{{VAR}}`)"
+    required: false
 outputs:
   modifiedFiles:
     description: "The number of files which have been modified"

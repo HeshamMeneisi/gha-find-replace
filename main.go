@@ -70,10 +70,10 @@ func replaceSimple(files []string, find string, replace string) int {
 	return modifiedCount
 }
 
-func replaceMapping(files []string, mapping map[string]string) int {
+func replaceMapping(files []string, mapping map[string]string, key_prefix string, key_suffix string) int {
 	modifiedCount := 0
 	for key, value := range mapping {
-		modifiedCount += replaceSimple(files, key, value)
+		modifiedCount += replaceSimple(files, key_prefix + key + key_suffix, value)
 	}
 	return modifiedCount
 }
@@ -84,6 +84,8 @@ func main() {
 	find := os.Getenv("INPUT_FIND")
 	replace := os.Getenv("INPUT_REPLACE")
 	mapping_json := os.Getenv("INPUT_MAPPING")
+	key_prefix := os.Getenv("INPUT_KEY_PREFIX")
+	key_suffix := os.Getenv("INPUT_KEY_SUFFIX")
 
 	files, filesErr := listFiles(include, exclude)
 	check(filesErr)
@@ -93,7 +95,7 @@ func main() {
 		var mapping map[string]string
 		json.Unmarshal([]byte(mapping_json), &mapping)
 		fmt.Println(fmt.Sprintf(`Replacing according to mapping %s`, mapping_json))
-		modifiedCount = replaceMapping(files, mapping)
+		modifiedCount = replaceMapping(files, mapping, key_prefix, key_suffix)
 	} else {
 		modifiedCount = replaceSimple(files, find, replace)
 	}
